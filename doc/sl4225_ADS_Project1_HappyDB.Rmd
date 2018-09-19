@@ -2,14 +2,17 @@
 title: "Happy Moments"
 author: "Shiqing Long"
 output:
-  word_document: default
-  html_notebook: default
   html_document: default
+  html_notebook: default
+  word_document: default
 ---
 
 HappyDB is a corpus of 100,000 crowd-sourced happy moments via Amazon's Mechanical Turk. You can read more about it on https://arxiv.org/abs/1801.07746.
 
 Here, we explore this data set and try to answer the question, "What makes people happy?"
+
+# What makes people happy?
+In this report, we explored what makes people happy using NLP and Text Mining. First, we studied the demographic information to view distribution of response. Second, we segment population according to status to compare deffierent categories. Then we appplied wordcloud (both single word and bigrams) to figure out the what makes us happy, also, we compared time period to see if there is any difference in happy moment. Last, we use topic modeling to summarize the things and senario that make people happy and visualize the topic distribution.
 
 # Step 0 - Load all the required libraries
 
@@ -105,7 +108,7 @@ ggplot(df,aes(x = marital, y = n,fill = parenthood))+
 
 Looking at the status of population, the single are little more than the married. Especially, single with no children and married with children contribute the majority among total population, nearly 83.79%.
 
-## Step 3 - Segment population to compare different emotional categories between profiles 
+## Step 3 - Different emotional categories among different status
 Segment population into 8 profiles by demogrphic features,using both gender,martal and parenthood features, analyze the different emotional categories between 8 profiles.
 ```{r}
 df_family <- hm_data%>%select(gender, marital,parenthood,ground_truth_category) %>% 
@@ -135,13 +138,9 @@ word_count <- bag_of_words %>%  #high-frenquency word list
 word_count <- word_count[1:200,]
 ```
 
-Dedelete meaningless words to make the wordcloud more insightful
+Delete meaningless words to make the wordcloud more insightful
 ```{r}
 set.seed(1234)
-#delete meaningless words like "day, time"
-word_count <- word_count[c(-2,-3),]
-#wordcloud(word_count$word,word_count$n, min.freq =1000, colors=rainbow(15))
-wordcloud2(word_count,size =0.5)
 #delete meaningless words like "day, time"
 word_count <- word_count[c(-2,-3),]
 wordcloud2(word_count,size =0.5)
@@ -267,7 +266,7 @@ wordcloud2(word_count_bigrams_24,size =0.3)
 
 Using bigram to analyze happy moment in the past 24 hours, vedio game, watched movie, talked with friend are mentioned by most of people. However, these little things fade away quickly.We can also notice from the wordcloud that little things like reading a book, walking dog, phone call, night sleep also made people feel happy. 
 
-## Step 5 - Topic Modeling 
+## Step 5 - Topic Modeling - identifying what topic the words come from
 ###Build corpus
 ```{r}
 set.seed(1)
@@ -333,4 +332,19 @@ ggplot(data = vizDataFrame, aes(topic, value, fill = document), ylab = "proporti
   facet_wrap(~ document, ncol = N)
 ```
 Form the barchart, we can see the topic distributions within the text. Longer bar implies higher possibility in that topic. 
+
+
+# Summary
+
+### 1.Most people feel happy when obtain affection and achievement. 
+Segment population into 8 profiles using characters like gender, marital, and parenthood. Most people remembered their happy time when they obtained affection and achievement.Their affection are most from interaction between people, their achievement are most from job, house and things with husband & girlfriend.
+
+### 2. Friendship and family members are the most common energy of happy.
+Friendship are most common words referred by the whole population. People liked the time to spend togerther, play vidio games and watch movies. Family words like wife, husband, son, mom and daughter are also what made people happy.
+
+### 3.Happy memory for single male most are from achievement,the married are from leisure.
+Although for the majority of profiles, affection was a dominate category in their happy moment, single male, no matter have children or not, their happy moment most came from achievement. Compared to other profile, the married with no children, their happly moment were largely derived from leisure.
+
+### 4.Even a small things provided subtle happiness, unforgetable events made people happy in longer time period.
+Lifes are full of happiness, small or big, very subtle or unforgetable. In the 24 hour period, people felt happy about even little things like having a good moring, dinner or walking dog. But in the longer period, like 3 months, they were happy about achievement like getting a job, graduation, saving money and loosing pounds.
 
